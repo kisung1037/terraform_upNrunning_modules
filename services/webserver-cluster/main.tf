@@ -248,3 +248,30 @@ data "template_file" "user_data" {
         db_port     = data.terraform_remote_state.db.outputs.port
     }
 }
+
+resource "aws_cloudwatch_metric_alarm" "high_cpu_utilizaion" {
+    alarm_name = "${var.cluster_name}-high-cpu-utilizion"
+    namespace = "AWS/EC2"
+    metric_name = "CPUUtilizaion"
+
+    dimensions = {
+      AutoScalingGroupName = aws_autoscaling_group.test.name
+    }
+
+    comparison_operator = "GreaterThanThreshold"
+    evaluation_periods  = 1
+    period              = 300
+    statistic           = "Average"
+    threshold           = 90
+    unit                = "Percent"
+}
+
+resource "aws_cloudwatch_metric_alarm" "low_cpu_credit_balance" {
+    alarm_name = "${var.cluster_name}-low-cpu-credit-balance"
+    namespace = "AWS/EC2"
+    metric_name = "CPUCreditBalance"
+
+    dimensions = {
+        AutoScalingGroupName = aws_autoscaling_group.test.name
+    }
+}
