@@ -74,15 +74,25 @@ resource "aws_autoscaling_group" "test" {
         key = "Name"
         value = var.cluster_name
         propagate_at_launch = true
-    }  
+    }
+    dynamic "tag" {
+        for_each = var.custom_tags
+    
+        content {
+            key                 = tag.key
+            value               = tag.value
+            propagate_at_launch = true
+        } 
+    }
 }
+
 
 data "aws_vpc" "default" {
     default = true
 }
 
 data "aws_subnet_ids" "default" {
-    vpc_id1 = data.aws_vpc.default.id
+    vpc_id = data.aws_vpc.default.id
   
 }
 
